@@ -3,7 +3,6 @@ import path from 'path';
 import bodyParser from "body-parser";
 
 import trackerRoutes from './controllers.js';
-import { __dirname } from "./helpers/pathHelpers.js";
 import { dbConnect } from "./services/dbConnect.js";
 import { resolveFromPublic } from "./middlewares.js";
 
@@ -12,7 +11,7 @@ app.use(resolveFromPublic('index.html'));
 app.listen(8000);
 
 const trackerApp = express();
-dbConnect();
+await dbConnect();
 trackerApp.use(bodyParser.urlencoded({ extended: true }));
 trackerApp.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,6 +19,6 @@ trackerApp.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return next();
 });
-trackerApp.use('/', trackerRoutes);
+trackerApp.use(trackerRoutes);
 trackerApp.use(resolveFromPublic('tracker.js'));
 trackerApp.listen(8001);

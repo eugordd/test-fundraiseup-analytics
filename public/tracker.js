@@ -11,6 +11,9 @@ class Tracker {
     }
 
     async track(event, ...tags) {
+        if (typeof(event) !== 'string') return;
+        if (tags.length > 0 && tags.some(tag => typeof(tag) !== 'string')) return;
+
         const eventObj = {
             event,
             tags: [ ...tags ],
