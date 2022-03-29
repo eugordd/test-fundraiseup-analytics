@@ -49,11 +49,16 @@ class Tracker {
 
     async #send() {
         if (this.events.length > 0) {
-            let response = await Tracker.#fetch(this.events);
+            const buffer = this.events;
+            this.events = [];
+            let response = await Tracker.#fetch(buffer);
             if (response.status !== 200) {
-                this.sendTimeoutId = setTimeout(async () => {
-                    await this.#send();
-                }, this.sendTimeoutDelay)
+                this.events.push(...buffer);
+                if (!this.sendTimeoutId) {
+                    this.sendTimeoutId = setTimeout(async () => {
+                        await this.#send();
+                    }, this.sendTimeoutDelay)
+                }
                 return;
             }
             if (response.status === 200) {
